@@ -394,7 +394,7 @@ GROUP BY emp_num; -- 672.7 hours
 
 select sum(char_hours_flown) as  Total_hours
 from dw.charter 
-where char_pilot = 101; 
+where char_pilot = 101
 or char_copilot = 101; -- total hours 1053.2
 
 
