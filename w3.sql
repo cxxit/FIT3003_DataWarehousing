@@ -405,6 +405,42 @@ or char_copilot = 101; -- total hours 1053.2
 
 
 
+select * from dw.CHARTER;
+select count(*) from dw.charter; --863
+select max(char_distance) 
+from dw.charter; --1701
+
+select count(*) from (
+select * from dw.Charter
+minus
+select * 
+from dw.charter
+where char_distance = (
+    select max(char_distance)
+    from dw.charter
+)); -- 851
+
+select count(*) from dw.charter 
+where char_distance = (
+    select max(char_distance)
+    from dw.charter
+); -- 12
+
+
+-- to get second largest char_distance 
+select max(char_distance)
+from (
+    select * from dw.Charter
+    minus
+    select * 
+    from dw.charter
+    where char_distance = (
+        select max(char_distance)
+        from dw.charter
+)); --1682
+
+
+
 
 
 
