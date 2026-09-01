@@ -242,3 +242,76 @@ using (categoryID)
 where upper(categoryDesc) = upper('Kitchen supplies') and Quarter = 1
 group by quarter, categoryID, categoryDesc;
 
+-- Part 3: The Sales Case Study (Month)
+-- Create a star schema for the Sales data.
+-- Analyse Total Sales 
+-- create star schema using TimeDim (Month), BranchDim and ProdVategoryDim
+
+drop table branchDim;
+create table branchDim as 
+select * from opdb.Branch;
+
+select * from branchdim;
+
+drop table prodCategoryDim;
+create table prodCategoryDim as 
+select * from opdb.category;
+
+select * from PRODCATEGORYDIM;
+
+
+drop table timedim;
+-- create table timedim
+-- (
+--   MM number(2),
+--   Month varchar2(20)
+-- );
+
+-- select * from timedim;
+
+-- insert into timedim values(1, 'January');
+-- insert into timedim values(2, 'February');
+-- insert into timedim values(3, 'March');
+-- insert into timedim values(4, 'April');
+-- insert into timedim values(5, 'May');
+-- insert into timedim values(6, 'June');
+-- insert into timedim values(7, 'July');
+-- insert into timedim values(8, 'August');
+-- insert into timedim values(9, 'September');
+-- insert into timedim values(10, 'October');
+-- insert into timedim values(11, 'November');
+-- insert into timedim values(12, 'December');
+
+create table timedim as 
+select distinct 
+  to_char(salesdate, 'MM') as MM, 
+  to_char(salesdate, 'Month') as Month_desc
+from opdb.Sales;
+select * from timedim;
+
+-- dont need to create tempfact for sales fact because the dates in timedim are obtained through the operational database 
+drop table salesfact;
+create table salesfact as 
+select to_char(S.SalesDate, 'Month') as Month, B.BranchID, P.CategoryID, sum(S.TotalPrice) as Total_Sales
+from opdb.Sales S, opdb.Branch B, opdb.Product P
+where S.BranchID = B.BranchID 
+and S.ProductNo = P.ProductNo
+group by to_char(S.SalesDate, 'Month'), B.BranchID, P.CategoryID;
+
+
+select * from salesfact;
+
+
+-- Show the total sales by different months. (CHECKED -- CORRECT)
+select month, sum(total_sales) as total_sales
+from salesfact
+group by month;
+
+-- Show the total sales by different branches and product categories. (CHECKED -- CORRECT)
+select * from branchdim;
+select * from prodcategorydim;
+
+select b.branchid, b.address, pc.categoryid, pc.categorydesc, sum(s.total_sales) as total_sales
+from SALESFACT s, branchdim b, PRODCATEGORYDIM pc
+where b.branchid = s.branchid and pc.categoryid = s.categoryid
+group by b.branchid, b.address, pc.categoryid, pc.categorydesc;
