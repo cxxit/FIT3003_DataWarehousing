@@ -238,6 +238,60 @@ and dw.student.major_code NOT IN
 
 
 
+-- PART C: Data Cleaning & Implement Star Schema
+drop table tempfact_uselog2;
+create table tempfact_uselog2 as 
+select distinct u.log_date, u.log_time, u.student_id, s.class_id, s.major_code
+from dw.uselog u, dw.student s 
+where u.student_id = s.student_id;
+
+select * from tempfact_uselog2;
+
+-- number of records in tempfact-uselog2
+select count(*) number_of_rows
+from tempfact_uselog2; -- 108261 
+
+select count(*) number_of_rows 
+from dw.uselog; -- 108267 
+
+alter table tempfact_uselog2
+add (timeid number);
+
+update tempfact_uselog2
+set timeid = 1
+where  to_char(log_time, 'HH24:MI') >= '06:01'
+and to_char(log_time, 'HH24:MI') <='12:00';
+
+update tempfact_uselog2
+set timeid = 2
+where  to_char(log_time, 'HH24:MI') >= '12:01'
+and to_char(log_time, 'HH24:MI') <='18:00';
+
+update tempfact_uselog2
+set timeid = 3
+where to_char(log_time, 'HH24:MI') >= '18:01'
+or to_char(log_time, 'HH24:MI') <='06:00';
+
+alter table tempfact_uselog2
+add (semid varchar2(10));
+
+update tempfact_uselog2
+set semid = 'S1'
+where to_char(log_date, 'MMDD') >= '0101'
+and to_char(log_date, 'MMDD') <= '0715';
+
+
+update tempfact_uselog2
+set semid = 'S2'
+where to_char(log_date, 'MMDD') >= '0716'
+and to_char(log_date, 'MMDD') <= '1231';
+
+
+
+
+-- uselog table compred to tempfact has additional 6 records 
+-- what 6 records is this 
+
 
 
 
