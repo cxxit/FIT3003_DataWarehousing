@@ -392,3 +392,6 @@ select * from truckfact3;
 
 
 
+
+
+
