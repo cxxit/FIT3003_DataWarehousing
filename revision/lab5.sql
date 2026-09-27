@@ -240,5 +240,28 @@ group by to_char(t.transaction_date, 'MonYYYY'), bk.book_id, br.branch_id;
 select * from book_sales_fact2
 order by time_id desc, branch_id desc;
 
+-- create reports 
+select * from book_sales_fact2;
+select * from BOOK_PRICE_DIM;
+select * from book_dim;
+select * from branch_dim;
+select * from time_dim;
+
+select 
+    f.time_id,
+    f.branch_id,
+    f.book_id,
+    b.book_title,
+    b.author,
+    bp.price,
+    f.number_of_books_sold
+from book_sales_fact2 f, book_dim b, book_price_dim bp
+where f.book_id = b.book_id and 
+    b.book_id = bp.book_id and
+    to_date(f.time_id, 'MonYYYY') >= to_date(bp.start_date, 'MonYYYY') and 
+    to_date(f.time_id, 'MonYYYY') <= case 
+            bp.end_date when 'Now' then sysdate
+            else to_date(bp.end_date, 'MonYYYY') end;
+
 
 
