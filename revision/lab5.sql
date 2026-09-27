@@ -129,6 +129,7 @@ select distinct * from branch;
 
 -- create dimension time_dim
 drop table time_dim;
+create table time_dim as
 select distinct
     to_char(transaction_date, 'MonYYYY') as time_id,
     to_char(transaction_date,'YYYY') as year, 
