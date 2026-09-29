@@ -342,7 +342,8 @@ where
     f.grade = g.grade and
     f.testcomponent = 'Overall' and 
     g.description = 'Competent'
-group by f.grade, f.testcomponent, g.description;  
+group by f.grade, f.testcomponent, g.description; -- 3 students   
+
 -- my solution also gives the same result 
 -- is this correct? however from my understanding of determinant dimension, the determinant dimension must be joined and queried
 -- alongside the other components, however wouldnt that be more iinefficient as compared to not joining 3 tables but just 2???
@@ -482,10 +483,21 @@ where f.citizenshipcountrycode = c.citizenship and
     c.countryname = 'China' and
     g.description = 'Proficient' and
     f.testcomponent = 'Listening' and
-    year = '2017'
+    f.year = '2017'
 group by f.citizenshipcountrycode, c.countryname, f.grade, g.description, f.testcomponent, f.year; 
 
 
+-- how many japanese students received a competent grade in 2017 
+select * from finalfact;
+
+select f.citizenshipcountrycode, c.countryname, f.grade, g.description, f.testcomponent, f.year, sum(f.total_students) as number_of_students
+from finalfact f, gradedim g, citizenshipdim c
+where f.citizenshipcountrycode = c.citizenship and 
+    f.grade = g.grade and 
+    c.countryname = 'Japan' and
+    g.description = 'Competent' and
+    f.year = '2017'
+group by f.citizenshipcountrycode, c.countryname, f.grade, g.description, f.testcomponent, f.year; -- this also shos number of students taking the testcomponent for listening is 2 
 
 
 
