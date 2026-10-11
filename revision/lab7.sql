@@ -206,3 +206,6 @@ where r.categoryid = c.categoryid and
     r.starid = 5
 group by c.categoryid, c.categorydescription, s.starid, s.stardescription
 order by c.categoryid, c.categorydescription, s.starid, s.stardescription;
+
+
+select * from storedim;
